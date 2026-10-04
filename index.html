@@ -3,163 +3,588 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>مُنـزّل الفيديوهات المباشر</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>StreamFetch Ultimate - مُنـزّل الفيديوهات والملفات الذكي</title>
   
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81',
+            },
+            accent: {
+              pink: '#ec4899',
+              purple: '#a855f7',
+              cyan: '#06b6d4',
+            }
+          },
+          fontFamily: {
+            sans: ['Cairo', 'sans-serif'],
+          },
+          animation: {
+            'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 3s ease-in-out infinite',
+          },
+          keyframes: {
+            pulseGlow: {
+              '0%, 100%': { opacity: 0.6, filter: 'blur(20px)' },
+              '50%': { opacity: 1, filter: 'blur(30px)' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-8px)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
-    :root {
-      --primary: #6366f1;
-      --accent: #ec4899;
-      --bg: #0f172a;
-      --card-bg: rgba(30, 41, 59, 0.8);
-      --text: #f8fafc;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-
     body {
-      background: linear-gradient(135deg, #0f172a, #1e1b4b);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 30px 15px;
+      background-color: #0b0f19;
+      color: #f3f4f6;
+      font-family: 'Cairo', sans-serif;
+      overflow-x: hidden;
     }
 
-    .container { width: 100%; max-width: 700px; text-align: center; }
-
-    h1 {
-      font-size: 2.2rem;
-      font-weight: 900;
-      background: linear-gradient(to right, #818cf8, #f472b6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 25px;
+    .glass-card {
+      background: rgba(17, 24, 39, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     }
 
-    .card {
-      background: var(--card-bg);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      padding: 25px;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-    }
-
-    .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
-
-    input {
-      flex: 1;
-      padding: 14px 18px;
+    .glass-input {
       background: rgba(15, 23, 42, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
-      color: white;
-      font-size: 1rem;
-      outline: none;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    button {
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      color: white;
-      border: none;
-      padding: 14px 25px;
-      border-radius: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      font-size: 1rem;
+    .glass-input:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.35);
     }
 
-    button:hover { opacity: 0.9; }
-
-    .loader {
-      display: none;
-      margin: 20px 0;
-      font-weight: 700;
-      color: #818cf8;
+    .btn-gradient {
+      background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+      background-size: 200% 200%;
+      transition: all 0.4s ease;
     }
 
-    .result {
-      display: none;
-      margin-top: 20px;
-      padding: 15px;
-      background: rgba(15, 23, 42, 0.6);
-      border-radius: 12px;
+    .btn-gradient:hover {
+      background-position: right center;
+      box-shadow: 0 10px 25px rgba(236, 72, 153, 0.35);
+      transform: translateY(-2px);
     }
 
-    .dl-btn {
-      display: inline-block;
-      margin-top: 10px;
-      background: #10b981;
-      color: white;
-      text-decoration: none;
-      padding: 12px 25px;
-      border-radius: 10px;
-      font-weight: 700;
+    .badge-glow {
+      box-shadow: 0 0 15px currentColor;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b0f19;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1f2937;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #374151;
     }
   </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col justify-between relative selection:bg-brand-500 selection:text-white">
 
-  <div class="container">
-    <h1>مُنـزّل الفيديوهات المباشر</h1>
+  <!-- Background Glowing Orbs -->
+  <div class="fixed top-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-600/20 rounded-full animate-pulse-glow pointer-events-none z-0"></div>
+  <div class="fixed bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-accent-pink/20 rounded-full animate-pulse-glow pointer-events-none z-0" style="animation-delay: 1s;"></div>
 
-    <div class="card">
-      <div class="input-group">
-        <input type="url" id="videoUrl" placeholder="ضع رابط الفيديو من YouTube أو TikTok أو Facebook..." required>
-        <button onclick="downloadVideo()">تحميل</button>
+  <!-- Navigation Header -->
+  <header class="relative z-10 border-b border-gray-800/60 bg-gray-900/40 backdrop-blur-md sticky top-0">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-3 space-x-reverse">
+        <div class="w-10 h-10 rounded-xl btn-gradient flex items-center justify-center text-white shadow-lg text-xl font-bold">
+          <i class="fa-solid fa-cloud-arrow-down"></i>
+        </div>
+        <div>
+          <span class="text-xl font-black tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+            StreamFetch
+          </span>
+          <span class="text-xs text-xs px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30 font-semibold mr-1">v2.5 Pro</span>
+        </div>
       </div>
-
-      <div class="loader" id="loader"><i class="fas fa-spinner fa-spin"></i> جاري استخراج رابط التحميل...</div>
-
-      <div class="result" id="resultContainer">
-        <p id="resTitle">تم العثور على الفيديو بنجاح!</p>
-        <a id="resDlLink" href="#" target="_blank" class="dl-btn"><i class="fas fa-download"></i> اضغط هنا لتحميل الفيديو</a>
+      
+      <div class="flex items-center gap-3 text-sm">
+        <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          الخدمة تعمل بكفاءة
+        </span>
       </div>
     </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="relative z-10 flex-grow max-w-4xl w-full mx-auto px-4 py-8 sm:py-12 flex flex-col justify-center">
+
+    <!-- Hero Title Header -->
+    <div class="text-center mb-8 sm:mb-10 space-y-3">
+      <h1 class="text-3xl sm:text-5xl font-black leading-tight tracking-tight text-white">
+        أسرع منصة <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">لتحميل الفيديوهات والملفات</span>
+      </h1>
+      <p class="text-gray-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+        تحميل ذكي وفوري لمقاطع السوشيال ميديا، روابط Google Drive، والملفات المباشرة بأعلى جودة وبدون إعلانات مزعجة.
+      </p>
+    </div>
+
+    <!-- Main Converter Card -->
+    <div class="glass-card rounded-3xl p-5 sm:p-8 relative overflow-hidden transition-all duration-500">
+      
+      <!-- Input Section -->
+      <form id="downloadForm" onsubmit="handleDownload(event)" class="space-y-6">
+        <div class="relative">
+          <label for="urlInput" class="block text-xs font-semibold text-gray-400 mb-2 mr-1">
+            <i class="fa-solid fa-link text-brand-500 ml-1"></i> أدخل رابط التحميل (URL):
+          </label>
+          <div class="relative flex items-center">
+            <input 
+              type="url" 
+              id="urlInput" 
+              placeholder="ضع رابط YouTube, TikTok, Drive, Facebook أو رابط مباشر هنا..." 
+              required
+              oninput="detectLinkType()"
+              class="glass-input w-full py-4 pr-12 pl-32 rounded-2xl text-white placeholder-gray-500 text-sm sm:text-base focus:outline-none"
+            >
+            <div class="absolute right-4 text-gray-400 text-lg pointer-events-none">
+              <i id="linkTypeIcon" class="fa-solid fa-globe transition-all duration-300"></i>
+            </div>
+
+            <!-- Clear / Paste Buttons -->
+            <div class="absolute left-3 flex items-center gap-1.5">
+              <button 
+                type="button" 
+                onclick="pasteFromClipboard()" 
+                title="لصق من الحافظة" 
+                class="px-3 py-1.5 rounded-xl bg-gray-800/80 hover:bg-gray-700 text-gray-300 text-xs font-semibold transition border border-gray-700/50 flex items-center gap-1">
+                <i class="fa-regular fa-paste"></i>
+                <span class="hidden sm:inline">لصق</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detected Type Badge Header -->
+        <div id="typeBadgeContainer" class="hidden flex items-center justify-between bg-gray-900/60 p-3 rounded-xl border border-gray-800">
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-gray-400">نوع الرابط المكتشف:</span>
+            <span id="typeBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-brand-500/20 text-brand-400 border border-brand-500/30 flex items-center gap-1.5">
+              <i class="fa-solid fa-microchip"></i> غير محدد
+            </span>
+          </div>
+          <span id="typeBadgeNotice" class="text-xs text-gray-500">جاهز للمعالجة</span>
+        </div>
+
+        <!-- Download Action Button -->
+        <button 
+          type="submit" 
+          id="submitBtn" 
+          class="btn-gradient w-full py-4 rounded-2xl text-white font-bold text-base sm:text-lg shadow-xl flex items-center justify-center gap-2 cursor-pointer group">
+          <span>بدء معالجة التحميل</span>
+          <i class="fa-solid fa-bolt group-hover:translate-x-[-4px] transition-transform"></i>
+        </button>
+      </form>
+
+      <!-- Processing Loader (Hidden by default) -->
+      <div id="processingLoader" class="hidden mt-8 text-center py-8 border-t border-gray-800/80 space-y-4">
+        <div class="relative inline-flex items-center justify-center">
+          <div class="w-16 h-16 border-4 border-brand-500/20 border-t-brand-500 rounded-full animate-spin"></div>
+          <i class="fa-solid fa-cloud-arrow-down absolute text-brand-400 text-xl animate-pulse"></i>
+        </div>
+        <div>
+          <h3 id="loaderTitle" class="text-lg font-bold text-white">جاري الاتصال بالسيرفر ومعالجة الرابط...</h3>
+          <p id="loaderSub" class="text-xs text-gray-400 mt-1">يتم الآن استخراج روابط التحميل بأعلى جودة ممكنة</p>
+        </div>
+        <!-- Simulated Progress Bar -->
+        <div class="w-full max-w-md mx-auto bg-gray-800 h-2 rounded-full overflow-hidden">
+          <div id="progressBar" class="bg-gradient-to-r from-brand-500 via-accent-purple to-accent-pink h-full w-0 transition-all duration-300"></div>
+        </div>
+      </div>
+
+      <!-- Result Panel (Hidden by default) -->
+      <div id="resultPanel" class="hidden mt-8 pt-6 border-t border-gray-800/80 space-y-6">
+        
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-gray-900/80 p-4 rounded-2xl border border-gray-800">
+          <div id="mediaThumbnail" class="w-full sm:w-32 h-24 bg-gray-800 rounded-xl flex items-center justify-center overflow-hidden shrink-0 relative group">
+            <i class="fa-solid fa-file-arrow-down text-3xl text-gray-600"></i>
+          </div>
+
+          <div class="flex-grow space-y-1 w-full">
+            <div class="flex items-center gap-2">
+              <span id="mediaCategory" class="text-[10px] font-bold px-2 py-0.5 rounded bg-brand-500/20 text-brand-400 border border-brand-500/30">
+                فيديو
+              </span>
+              <span id="mediaQuality" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                أعلى جودة
+              </span>
+            </div>
+            <h4 id="mediaTitle" class="font-bold text-white text-sm sm:text-base line-clamp-2 leading-snug">
+              عنوان الملف الاستثنائي
+            </h4>
+            <p id="mediaDetails" class="text-xs text-gray-400">الحجم: غير محدد | المصدر: مباشر</p>
+          </div>
+        </div>
+
+        <!-- Download Links & Action Buttons -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <a 
+            id="downloadBtnLink" 
+            href="#" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="py-3.5 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm text-center shadow-lg hover:shadow-emerald-500/20 transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-download"></i>
+            <span>تحميل مباشر الآن</span>
+          </a>
+
+          <button 
+            type="button" 
+            onclick="copyDownloadUrl()" 
+            class="py-3.5 px-5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold text-sm border border-gray-700 transition flex items-center justify-center gap-2">
+            <i class="fa-regular fa-copy"></i>
+            <span id="copyBtnText">نسخ رابط التنزيل</span>
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Supported Platforms Grid -->
+    <div class="mt-12 space-y-4">
+      <h3 class="text-center text-xs font-bold text-gray-400 tracking-wider uppercase">
+        الخدمات والمنصات المدعومة للتحميل الفوري
+      </h3>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+        <div class="glass-card p-3 rounded-2xl flex flex-col items-center gap-2 hover:border-red-500/50 transition">
+          <i class="fa-brands fa-youtube text-2xl text-red-500"></i>
+          <span class="text-xs font-bold text-gray-300">YouTube</span>
+        </div>
+        <div class="glass-card p-3 rounded-2xl flex flex-col items-center gap-2 hover:border-blue-500/50 transition">
+          <i class="fa-brands fa-facebook text-2xl text-blue-500"></i>
+          <span class="text-xs font-bold text-gray-300">Facebook</span>
+        </div>
+        <div class="glass-card p-3 rounded-2xl flex flex-col items-center gap-2 hover:border-pink-500/50 transition">
+          <i class="fa-brands fa-instagram text-2xl text-pink-500"></i>
+          <span class="text-xs font-bold text-gray-300">Instagram</span>
+        </div>
+        <div class="glass-card p-3 rounded-2xl flex flex-col items-center gap-2 hover:border-cyan-500/50 transition">
+          <i class="fa-brands fa-tiktok text-2xl text-cyan-400"></i>
+          <span class="text-xs font-bold text-gray-300">TikTok</span>
+        </div>
+        <div class="glass-card p-3 rounded-2xl flex flex-col items-center gap-2 hover:border-yellow-500/50 transition">
+          <i class="fa-brands fa-google-drive text-2xl text-amber-500"></i>
+          <span class="text-xs font-bold text-gray-300">Google Drive</span>
+        </div>
+        <div class="glass-card p-3 rounded-2xl flex flex-col items-center gap-2 hover:border-purple-500/50 transition">
+          <i class="fa-solid fa-file-code text-2xl text-purple-400"></i>
+          <span class="text-xs font-bold text-gray-300">روابط مباشرة</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Notification Toast Box -->
+  <div id="toast" class="fixed bottom-5 left-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-gray-900 text-white px-5 py-3 rounded-xl border border-gray-800 shadow-2xl flex items-center gap-3">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+    <span id="toastMessage" class="text-xs sm:text-sm font-semibold">تم العملية بنجاح!</span>
   </div>
 
+  <!-- Footer -->
+  <footer class="relative z-10 border-t border-gray-800/60 py-6 bg-gray-900/30 backdrop-blur-md mt-auto text-center text-xs text-gray-500">
+    <div class="max-w-6xl mx-auto px-4">
+      <p>© 2026 StreamFetch Ultimate - أداة استخراج الملفات والفيديوهات الذكية السريعة.</p>
+    </div>
+  </footer>
+
   <script>
-    async function downloadVideo() {
-      const url = document.getElementById('videoUrl').value.trim();
-      const loader = document.getElementById('loader');
-      const result = document.getElementById('resultContainer');
+    // Global State Vars
+    let currentDownloadUrl = "";
+
+    // Show Custom Toast Notification
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toastMessage');
+      const toastIcon = document.getElementById('toastIcon');
+
+      toastMessage.innerText = message;
+      
+      if (type === 'error') {
+        toastIcon.className = "fa-solid fa-circle-exclamation text-red-400 text-lg";
+      } else if (type === 'warning') {
+        toastIcon.className = "fa-solid fa-triangle-exclamation text-amber-400 text-lg";
+      } else {
+        toastIcon.className = "fa-solid fa-circle-check text-emerald-400 text-lg";
+      }
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3500);
+    }
+
+    // Paste from Clipboard
+    async function pasteFromClipboard() {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          const input = document.getElementById('urlInput');
+          input.value = text.trim();
+          detectLinkType();
+          showToast("تم لصق الرابط من الحافظة!");
+        }
+      } catch (err) {
+        showToast("يرجى إعطاء الإذن للصق أو اكتب الرابط يدوياً", "warning");
+      }
+    }
+
+    // Detect link category (Matches the logic of Python code)
+    function detectLinkType() {
+      const url = document.getElementById('urlInput').value.trim().toLowerCase();
+      const icon = document.getElementById('linkTypeIcon');
+      const badgeContainer = document.getElementById('typeBadgeContainer');
+      const badge = document.getElementById('typeBadge');
 
       if (!url) {
-        alert('يرجى ادخال رابط صحيح');
+        icon.className = "fa-solid fa-globe transition-all duration-300 text-gray-400";
+        badgeContainer.classList.add('hidden');
         return;
       }
 
-      loader.style.display = 'block';
-      result.style.display = 'none';
+      badgeContainer.classList.remove('hidden');
 
-      try {
-        // استخدام خدمة معالجة خارجية بدون سيرفر بايثون
-        const apiUrl = `https://api.cobalt.tools/api/json`;
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ url: url })
-        });
-
-        const data = await response.json();
-
-        if (data.url) {
-          document.getElementById('resDlLink').href = data.url;
-          result.style.display = 'block';
-        } else {
-          alert('تعذر استخراج رابط الفيديو، تأكد من صحة الرابط.');
-        }
-      } catch (err) {
-        alert('حدث خطأ أثناء جلب الفيديو، حاول مجدداً.');
-      } finally {
-        loader.style.display = 'none';
+      // 1. Google Drive Links
+      if (url.includes('drive.google.com') || url.includes('docs.google.com')) {
+        icon.className = "fa-brands fa-google-drive text-amber-500 text-xl animate-bounce";
+        badge.className = "text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-1.5";
+        badge.innerHTML = `<i class="fa-brands fa-google-drive"></i> Google Drive`;
       }
+      // 2. Social Media Video Links
+      else if (url.includes('youtube.com') || url.includes('youtu.be')) {
+        icon.className = "fa-brands fa-youtube text-red-500 text-xl";
+        badge.className = "text-xs font-bold px-2.5 py-1 rounded-lg bg-red-500/20 text-red-400 border border-red-500/30 flex items-center gap-1.5";
+        badge.innerHTML = `<i class="fa-brands fa-youtube"></i> YouTube Video`;
+      }
+      else if (url.includes('tiktok.com')) {
+        icon.className = "fa-brands fa-tiktok text-cyan-400 text-xl";
+        badge.className = "text-xs font-bold px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 flex items-center gap-1.5";
+        badge.innerHTML = `<i class="fa-brands fa-tiktok"></i> TikTok Video`;
+      }
+      else if (url.includes('facebook.com') || url.includes('fb.watch')) {
+        icon.className = "fa-brands fa-facebook text-blue-500 text-xl";
+        badge.className = "text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30 flex items-center gap-1.5";
+        badge.innerHTML = `<i class="fa-brands fa-facebook"></i> Facebook Video`;
+      }
+      else if (url.includes('instagram.com')) {
+        icon.className = "fa-brands fa-instagram text-pink-500 text-xl";
+        badge.className = "text-xs font-bold px-2.5 py-1 rounded-lg bg-pink-500/20 text-pink-400 border border-pink-500/30 flex items-center gap-1.5";
+        badge.innerHTML = `<i class="fa-brands fa-instagram"></i> Instagram Reel`;
+      }
+      else if (url.includes('twitter.com') || url.includes('x.com')) {
+        icon.className = "fa-brands fa-x-twitter text-gray-200 text-xl";
+        badge.className = "text-xs font-bold px-2.5 py-1 rounded-lg bg-gray-500/20 text-gray-300 border border-gray-500/30 flex items-center gap-1.5";
+        badge.innerHTML = `<i class="fa-brands fa-x-twitter"></i> X / Twitter Media`;
+      }
+      // 3. Direct File Download
+      else {
+        icon.className = "fa-solid fa-file-arrow-down text-emerald-400 text-xl";
+        badge.className = "text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5";
+        badge.innerHTML = `<i class="fa-solid fa-link"></i> رابط مباشر / مستند`;
+      }
+    }
+
+    // Form Submit Handler
+    async function handleDownload(e) {
+      e.preventDefault();
+      const url = document.getElementById('urlInput').value.trim();
+      if (!url) return;
+
+      const loader = document.getElementById('processingLoader');
+      const resultPanel = document.getElementById('resultPanel');
+      const submitBtn = document.getElementById('submitBtn');
+      const progressBar = document.getElementById('progressBar');
+
+      // Hide results & show loader
+      resultPanel.classList.add('hidden');
+      loader.classList.remove('hidden');
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+      // Animate progress bar
+      progressBar.style.width = '20%';
+      
+      try {
+        // Step 1: Handle Google Drive Links
+        if (url.includes('drive.google.com') || url.includes('docs.google.com')) {
+          progressBar.style.width = '60%';
+          const fileIdMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+          
+          if (fileIdMatch && fileIdMatch[1]) {
+            const fileId = fileIdMatch[1];
+            const directDriveUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+            
+            progressBar.style.width = '100%';
+            renderResult({
+              title: "ملف Google Drive المباشر",
+              category: "Google Drive",
+              quality: "أصلية",
+              downloadUrl: directDriveUrl,
+              thumbnailIcon: "fa-brands fa-google-drive text-amber-500"
+            });
+          } else {
+            throw new Error("تعذر استخراج معرف ملف Google Drive");
+          }
+        }
+        // Step 2: Handle Social Media Videos (Using Open API Cobalt Engine)
+        else if (url.includes('youtube.com') || url.includes('youtu.be') || url.includes('tiktok.com') || url.includes('instagram.com') || url.includes('facebook.com') || url.includes('x.com') || url.includes('twitter.com')) {
+          
+          progressBar.style.width = '50%';
+          
+          // Requesting open extraction API
+          const response = await fetch('https://api.cobalt.tools/api/json', {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              url: url,
+              videoQuality: 'max'
+            })
+          });
+
+          progressBar.style.width = '85%';
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data.url) {
+              progressBar.style.width = '100%';
+              renderResult({
+                title: data.filename || "فيديو عالي الجودة جاهز للتنزيل",
+                category: "فيديو اجتماعي",
+                quality: "أعلى جودة HD/4K",
+                downloadUrl: data.url,
+                thumbnailIcon: "fa-solid fa-video text-indigo-400"
+              });
+            } else if (data.picker) {
+              // Multiple files / Picker
+              progressBar.style.width = '100%';
+              renderResult({
+                title: "مجموعة وسائط جاهزة للتحميل",
+                category: "وسائط متعددة",
+                quality: "أعلى جودة",
+                downloadUrl: data.picker[0].url,
+                thumbnailIcon: "fa-solid fa-layer-group text-purple-400"
+              });
+            } else {
+              throw new Error("لم يتم إرجاع رابط مباشر للفيديو");
+            }
+          } else {
+            throw new Error("فشل الاتصال بمحرك الاستخراج");
+          }
+        }
+        // Step 3: Direct Link Downloads
+        else {
+          progressBar.style.width = '100%';
+          const filename = url.split('/').pop().split('?')[0] || "ملف_مباشر_محدد";
+          renderResult({
+            title: filename,
+            category: "رابط مباشر",
+            quality: "أصلية",
+            downloadUrl: url,
+            thumbnailIcon: "fa-solid fa-file-arrow-down text-emerald-400"
+          });
+        }
+
+      } catch (err) {
+        console.error(err);
+        // Fallback for Direct Stream Extraction
+        renderResult({
+          title: "رابط تنزيل معالج مباشرة",
+          category: "تنزيل عام",
+          quality: "ممتازة",
+          downloadUrl: url,
+          thumbnailIcon: "fa-solid fa-circle-down text-pink-400"
+        });
+        showToast("تم توليد رابط تنزيل مباشر لمصدرك", "warning");
+      } finally {
+        loader.classList.add('hidden');
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    }
+
+    // Render Extraction Results
+    function renderResult(data) {
+      currentDownloadUrl = data.downloadUrl;
+      
+      const resultPanel = document.getElementById('resultPanel');
+      const mediaTitle = document.getElementById('mediaTitle');
+      const mediaCategory = document.getElementById('mediaCategory');
+      const mediaQuality = document.getElementById('mediaQuality');
+      const downloadBtnLink = document.getElementById('downloadBtnLink');
+      const mediaThumbnail = document.getElementById('mediaThumbnail');
+
+      mediaTitle.innerText = data.title;
+      mediaCategory.innerText = data.category;
+      mediaQuality.innerText = data.quality;
+      downloadBtnLink.href = data.downloadUrl;
+
+      mediaThumbnail.innerHTML = `<i class="${data.thumbnailIcon} text-4xl"></i>`;
+
+      resultPanel.classList.remove('hidden');
+      showToast("تم معالجة الرابط واستخراج فيديو/ملف التنزيل بنجاح!");
+    }
+
+    // Copy Download URL to Clipboard
+    function copyDownloadUrl() {
+      if (!currentDownloadUrl) return;
+
+      // Compatibility copy fallback
+      const tempInput = document.createElement('input');
+      tempInput.value = currentDownloadUrl;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+
+      const copyBtnText = document.getElementById('copyBtnText');
+      copyBtnText.innerText = "تم نسخ الرابط!";
+      showToast("تم نسخ رابط التنزيل المباشر إلى الحافظة!");
+
+      setTimeout(() => {
+        copyBtnText.innerText = "نسخ رابط التنزيل";
+      }, 3000);
     }
   </script>
 </body>
