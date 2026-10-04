@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مُنـزّل الفيديوهات الشامل - Universal Video Downloader</title>
+  <!-- Google Fonts: Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --accent: #ec4899;
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --danger: #ef4444;
+      --success: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 15px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 850px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-top: 20px;
+      margin-bottom: 35px;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 900;
+      background: linear-gradient(to right, #818cf8, #c084fc, #f472b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .platforms-bar {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .platform-badge {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      padding: 8px 16px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .platform-badge i {
+      font-size: 1.2rem;
+    }
+
+    .platform-badge.youtube i { color: #ff0000; }
+    .platform-badge.tiktok i { color: #00f2fe; }
+    .platform-badge.facebook i { color: #1877f2; }
+    .platform-badge.instagram i { color: #e1306c; }
+
+    .main-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+      margin-bottom: 30px;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      position: relative;
+    }
+
+    @media (max-width: 640px) {
+      .input-group {
+        flex-direction: column;
+      }
+    }
+
+    .input-wrapper {
+      position: relative;
+      flex: 1;
+    }
+
+    .input-wrapper i {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 1.2rem;
+    }
+
+    input[type="url"] {
+      width: 100%;
+      padding: 16px 45px 16px 85px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 2px solid var(--card-border);
+      border-radius: 14px;
+      color: white;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    input[type="url"]:focus {
+      border-color: var(--primary);
+    }
+
+    .btn-paste {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.3s;
+    }
+
+    .btn-paste:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      border: none;
+      padding: 16px 30px;
+      border-radius: 14px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .quality-selector {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .quality-selector label {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .options-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .option-btn {
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+
+    .option-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Loader */
+    .loader-container {
+      display: none;
+      text-align: center;
+      padding: 30px 0;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255, 255, 255, 0.1);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Result Card */
+    .result-container {
+      display: none;
+      margin-top: 25px;
+      padding-top: 25px;
+      border-top: 1px solid var(--card-border);
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-card {
+      display: flex;
+      gap: 20px;
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid var(--card-border);
+    }
+
+    @media (max-width: 640px) {
+      .result-card {
+        flex-direction: column;
+      }
+    }
+
+    .thumb-wrapper {
+      width: 220px;
+      height: 130px;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      background: #000;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 640px) {
+      .thumb-wrapper {
+        width: 100%;
+        height: 200px;
+      }
+    }
+
+    .thumb-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .result-details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .video-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .dl-btn {
+      background: var(--success);
+      color: white;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .dl-btn:hover {
+      background: #059669;
+      transform: translateY(-2px);
+    }
+
+    .alert {
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 15px;
+      display: none;
+      font-size: 0.95rem;
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: auto;
+      padding: 20px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>مُنـزّل الفيديوهات الشامل</h1>
+      <p>حمل أحدث الفيديوهات من منصتك المفضلة بأعلى جودة وبدون إعلانات</p>
+    </header>
+
+    <div class="platforms-bar">
+      <div class="platform-badge youtube"><i class="fab fa-youtube"></i> YouTube</div>
+      <div class="platform-badge tiktok"><i class="fab fa-tiktok"></i> TikTok</div>
+      <div class="platform-badge facebook"><i class="fab fa-facebook"></i> Facebook</div>
+      <div class="platform-badge instagram"><i class="fab fa-instagram"></i> Instagram</div>
+    </div>
+
+    <div class="main-card">
+      <form id="downloadForm" onsubmit="handleDownload(event)">
+        <div class="input-group">
+          <div class="input-wrapper">
+            <i class="fas fa-link"></i>
+            <input type="url" id="videoUrl" placeholder="ضع رابط الفيديو هنا (YouTube, TikTok, Facebook, Instagram)..." required autocomplete="off">
+            <button type="button" class="btn-paste" onclick="pasteClipboard()"><i class="fas fa-paste"></i> لصق</button>
+          </div>
+          <button type="submit" class="btn-submit" id="submitBtn">
+            <i class="fas fa-download"></i> استخراج
+          </button>
+        </div>
+
+        <div class="quality-selector">
+          <label><i class="fas fa-sliders-h"></i> الجودة المطلوب استخراجها:</label>
+          <div class="options-group">
+            <button type="button" class="option-btn active" data-quality="max">أعلى جودة (1080p+)</button>
+            <button type="button" class="option-btn" data-quality="720">HD (720p)</button>
+            <button type="button" class="option-btn" data-quality="audio">صوت فقط (MP3)</button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Loader -->
+      <div class="loader-container" id="loader">
+        <div class="spinner"></div>
+        <p>جاري استخراج وتحضير رابط التحميل بأعلى جودة...</p>
+      </div>
+
+      <!-- Alert -->
+      <div class="alert alert-error" id="errorAlert"></div>
+
+      <!-- Result Section -->
+      <div class="result-container" id="resultContainer">
+        <div class="result-card">
+          <div class="thumb-wrapper">
+            <img id="resThumb" src="" alt="صورة الفيديو">
+          </div>
+          <div class="result-details">
+            <div class="video-title" id="resTitle">عنوان الفيديو المباشر</div>
+            <a id="resDlLink" href="#" target="_blank" class="dl-btn">
+              <i class="fas fa-cloud-download-alt"></i> تحميل الفيديو الآن
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2026 جميع الحقوق محفوظة - تم التطوير باستخدام أحدث محركات الاستخراج السريعة</p>
+    </footer>
+  </div>
+
+  <script>
+    let selectedQuality = 'max';
+
+    // اختيار الجودة
+    document.querySelectorAll('.option-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        selectedQuality = this.getAttribute('data-quality');
+      });
+    });
+
+    // زر اللصق السريع
+    async function pasteClipboard() {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          document.getElementById('videoUrl').value = text;
+        }
+      } catch (err) {
+        alert('يرجى السماح بالوصول للمحفظة أو الصق الرابط يدويًا');
+      }
+    }
+
+    // المعالجة الرئيسية للاستخراج
+    async function handleDownload(e) {
+      e.preventDefault();
+      
+      const urlInput = document.getElementById('videoUrl').value.trim();
+      const loader = document.getElementById('loader');
+      const errorAlert = document.getElementById('errorAlert');
+      const resultContainer = document.getElementById('resultContainer');
+      const submitBtn = document.getElementById('submitBtn');
+
+      if (!urlInput) return;
+
+      // إخفاء النتائج والأخطاء السابقة
+      errorAlert.style.display = 'none';
+      resultContainer.style.display = 'none';
+      
+      // تشغيل التحميل
+      loader.style.display = 'block';
+      submitBtn.disabled = true;
+
+      // قائمة السيرفرات المتوفرة محلياً ودولياً لضمان العمل دائماً
+      const apiInstances = [
+        'https://api.cobalt.tools/api/json',
+        'https://cobalt-api.kwi.im/api/json',
+        'https://co.wuk.sh/api/json'
+      ];
+
+      let isAudio = selectedQuality === 'audio';
+      let payload = {
+        url: urlInput,
+        videoQuality: selectedQuality === 'audio' ? '720' : selectedQuality,
+        isAudioOnly: isAudio
+      };
+
+      let success = false;
+
+      for (let apiUrl of apiInstances) {
+        try {
+          const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
+
+          const data = await response.json();
+
+          if (data && (data.url || data.picker)) {
+            let finalDownloadUrl = data.url;
+
+            // في حال وجود أكثر من جودة أو ملف اختياري
+            if (!finalDownloadUrl && data.picker && data.picker.length > 0) {
+              finalDownloadUrl = data.picker[0].url;
+            }
+
+            // إظهار النتيجة
+            document.getElementById('resTitle').innerText = data.filename || 'تم استخراج الفيديو بنجاح!';
+            document.getElementById('resThumb').src = 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=500&q=80';
+            document.getElementById('resDlLink').href = finalDownloadUrl;
+            
+            resultContainer.style.display = 'block';
+            success = true;
+            break;
+          }
+        } catch (err) {
+          console.warn('جاري تجربة خادم آخر...', err);
+        }
+      }
+
+      loader.style.display = 'none';
+      submitBtn.disabled = false;
+
+      if (!success) {
+        errorAlert.innerText = 'تعذر استخراج الفيديو. يرجى التأكد من صحة الرابط وأن حساب صاحب الفيديو ليس خاصاً (Private).';
+        errorAlert.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>
