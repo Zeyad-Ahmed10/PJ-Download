@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>مُنـزّل الفيديوهات المباشر - Universal Video Downloader</title>
+  <title>مُنـزّل الفيديوهات الشامل - Universal Video Downloader</title>
   <!-- Google Fonts: Cairo -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -302,8 +302,8 @@
 
   <div class="container">
     <header>
-      <h1>مُنـزّل الفيديوهات المباشر</h1>
-      <p>حمل الفيديوهات مباشرة بدون تحويلات وبأعلى جودة</p>
+      <h1>مُنـزّل الفيديوهات الشامل</h1>
+      <p>معالجة سريعة وتحميل مباشر بروابط حقيقية 100%</p>
     </header>
 
     <div class="platforms-bar">
@@ -318,48 +318,50 @@
         <div class="input-group">
           <div class="input-wrapper">
             <i class="fas fa-link"></i>
-            <input type="url" id="videoUrl" placeholder="ضع رابط الفيديو هنا..." required autocomplete="off">
+            <input type="url" id="videoUrl" placeholder="ضع رابط الفيديو أو ملف Google Drive هنا..." required autocomplete="off">
             <button type="button" class="btn-paste" onclick="pasteClipboard()"><i class="fas fa-paste"></i> لصق</button>
           </div>
           <button type="submit" class="btn-submit" id="submitBtn">
-            <i class="fas fa-download"></i> استخراج الفيديو
+            <i class="fas fa-download"></i> بدء التحميل
           </button>
         </div>
 
         <div class="quality-selector">
-          <label><i class="fas fa-sliders-h"></i> النوع المطلوبة:</label>
+          <label><i class="fas fa-sliders-h"></i> الوضع المطلوب:</label>
           <div class="options-group">
-            <button type="button" class="option-btn active" data-quality="max">فيديو MP4 بأعلى جودة</button>
-            <button type="button" class="option-btn" data-quality="audio">صوت MP3 فقط</button>
+            <button type="button" class="option-btn active" data-quality="max">فيديو بأعلى جودة (Best Quality)</button>
+            <button type="button" class="option-btn" data-quality="audio">صوت فقط (MP3)</button>
           </div>
         </div>
       </form>
 
       <div class="loader-container" id="loader">
         <div class="spinner"></div>
-        <p>جاري جلب رابط الفيديو المباشر والسريع...</p>
+        <p>جاري معالجة الفيديو بواسطة yt-dlp على السيرفر، يرجى الانتظار ثوانٍ...</p>
       </div>
 
       <div class="alert-error" id="errorAlert"></div>
 
       <div class="result-container" id="resultContainer">
         <div class="result-card">
-          <div class="video-title" id="resTitle">تم تجهيز ملف التحميل المباشر بنجاح!</div>
-          <!-- رابط تحميل مباشر للملف نفسه دون مغادرة الموقع -->
-          <a id="resDlLink" href="" download class="dl-btn">
-            <i class="fas fa-file-download"></i> تحميل الفيديو الآن فوراً (MP4)
+          <div class="video-title" id="resTitle">تمت معالجة الفيديو بنجاح!</div>
+          <a id="resDlLink" href="#" download class="dl-btn">
+            <i class="fas fa-file-download"></i> حفظ الملف المباشر على جهازك
           </a>
         </div>
       </div>
     </div>
 
     <footer>
-      <p>© 2026 تطبيق التنزيل المباشر</p>
+      <p>© 2026 تطبيق التحميل المباشر الذكي</p>
     </footer>
   </div>
 
   <script>
     let selectedQuality = 'max';
+
+    // ضع هنا رابط السيرفر الخاص بك بعد رفعه على Render
+    const BACKEND_URL = 'https://YOUR-RENDER-APP-NAME.onrender.com/download';
 
     document.querySelectorAll('.option-btn').forEach(btn => {
       btn.addEventListener('click', function() {
@@ -394,65 +396,43 @@
       loader.style.display = 'block';
       submitBtn.disabled = true;
 
-      // استخدام خوادم استخراج مباشرة عالية الكفاءة وداعمة لـ CORS بدون تحويل لمواقع خارجية
-      const apis = [
-        `https://api.vshred.workers.dev/?url=${encodeURIComponent(urlInput)}`,
-        `https://cobalt-api.kwi.im/api/json`,
-        `https://co.wuk.sh/api/json`
-      ];
+      try {
+        const response = await fetch(BACKEND_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            url: urlInput,
+            quality: selectedQuality
+          })
+        });
 
-      let directMediaUrl = null;
-      let filename = 'video.mp4';
-
-      // تجربة جلب الرابط المباشر من سيرفرات السحابة
-      for (let api of apis) {
-        try {
-          if (api.includes('workers.dev')) {
-            const res = await fetch(api);
-            const data = await res.json();
-            if (data && (data.url || data.downloadUrl)) {
-              directMediaUrl = data.url || data.downloadUrl;
-              if (data.title) filename = data.title;
-              break;
-            }
-          } else {
-            const res = await fetch(api, {
-              method: 'POST',
-              headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                url: urlInput,
-                videoQuality: '1080',
-                isAudioOnly: (selectedQuality === 'audio')
-              })
-            });
-            const data = await res.json();
-            if (data && data.url) {
-              directMediaUrl = data.url;
-              if (data.filename) filename = data.filename;
-              break;
-            }
-          }
-        } catch (err) {
-          console.log('جاري التبديل للمحرك التالي...');
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.error || 'حدث خطأ أثناء معالجة التحميل.');
         }
-      }
 
-      loader.style.display = 'none';
-      submitBtn.disabled = false;
-
-      if (directMediaUrl) {
-        const dlBtn = document.getElementById('resDlLink');
-        dlBtn.href = directMediaUrl;
-        dlBtn.setAttribute('download', filename);
+        // تحويل استجابة السيرفر إلى ملف للتنزيل المباشر في المتصفح
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
         
-        document.getElementById('resTitle').innerText = selectedQuality === 'audio' 
-          ? 'تم تجهيز ملف الصوت المباشر (MP3):' 
-          : 'تم تجهيز ملف الفيديو المباشر (MP4) بأعلى جودة:';
-          
+        const dlBtn = document.getElementById('resDlLink');
+        dlBtn.href = downloadUrl;
+        
+        // تحديد امتداد الملف المقترح
+        const ext = selectedQuality === 'audio' ? 'mp3' : 'mp4';
+        dlBtn.setAttribute('download', `downloaded_file.${ext}`);
+        
+        document.getElementById('resTitle').innerText = 'تم تحضير الملف وجاهز للتنزيل المباشر:';
         resultContainer.style.display = 'block';
-      } else {
-        errorAlert.innerText = 'عذراً، لم نتمكن من استخراج رابط تنزيل مباشر لهذا الفيديو حالياً. تأكد من صحة الرابط أو جرب فيديو آخر.';
+
+      } catch (err) {
+        errorAlert.innerText = err.message || 'تعذر الاتصال بالسيرفر الخاص بك. يرجى التأكد من تشغيل ملف app.py على السيرفر.';
         errorAlert.style.display = 'block';
+      } finally {
+        loader.style.display = 'none';
+        submitBtn.disabled = false;
       }
     }
   </script>
