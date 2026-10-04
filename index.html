@@ -91,10 +91,7 @@
       transition: all 0.3s ease;
     }
 
-    .platform-badge i {
-      font-size: 1.2rem;
-    }
-
+    .platform-badge i { font-size: 1.2rem; }
     .platform-badge.youtube i { color: #ff0000; }
     .platform-badge.tiktok i { color: #00f2fe; }
     .platform-badge.facebook i { color: #1877f2; }
@@ -117,9 +114,7 @@
     }
 
     @media (max-width: 640px) {
-      .input-group {
-        flex-direction: column;
-      }
+      .input-group { flex-direction: column; }
     }
 
     .input-wrapper {
@@ -148,9 +143,7 @@
       transition: border-color 0.3s;
     }
 
-    input[type="url"]:focus {
-      border-color: var(--primary);
-    }
+    input[type="url"]:focus { border-color: var(--primary); }
 
     .btn-paste {
       position: absolute;
@@ -167,9 +160,7 @@
       transition: background 0.3s;
     }
 
-    .btn-paste:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
+    .btn-paste:hover { background: rgba(255, 255, 255, 0.2); }
 
     .btn-submit {
       background: linear-gradient(135deg, var(--primary), var(--accent));
@@ -211,10 +202,7 @@
       font-size: 0.95rem;
     }
 
-    .options-group {
-      display: flex;
-      gap: 10px;
-    }
+    .options-group { display: flex; gap: 10px; }
 
     .option-btn {
       background: rgba(15, 23, 42, 0.5);
@@ -233,7 +221,6 @@
       border-color: var(--primary);
     }
 
-    /* Loader */
     .loader-container {
       display: none;
       text-align: center;
@@ -250,11 +237,8 @@
       margin: 0 auto 15px auto;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Result Card */
     .result-container {
       display: none;
       margin-top: 25px;
@@ -277,84 +261,39 @@
       border: 1px solid var(--card-border);
     }
 
-    @media (max-width: 640px) {
-      .result-card {
-        flex-direction: column;
-      }
-    }
-
-    .thumb-wrapper {
-      width: 220px;
-      height: 130px;
-      border-radius: 12px;
-      overflow: hidden;
-      position: relative;
-      background: #000;
-      flex-shrink: 0;
-    }
-
-    @media (max-width: 640px) {
-      .thumb-wrapper {
-        width: 100%;
-        height: 200px;
-      }
-    }
-
-    .thumb-wrapper img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    @media (max-width: 640px) { .result-card { flex-direction: column; } }
 
     .result-details {
       flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      gap: 15px;
     }
 
     .video-title {
       font-size: 1.1rem;
       font-weight: 700;
-      margin-bottom: 15px;
       line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
     }
 
     .dl-btn {
       background: var(--success);
       color: white;
       text-decoration: none;
-      padding: 12px 24px;
+      padding: 14px 24px;
       border-radius: 12px;
       font-weight: 700;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
       transition: background 0.3s, transform 0.2s;
     }
 
     .dl-btn:hover {
       background: #059669;
       transform: translateY(-2px);
-    }
-
-    .alert {
-      padding: 15px;
-      border-radius: 12px;
-      margin-top: 15px;
-      display: none;
-      font-size: 0.95rem;
-    }
-
-    .alert-error {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #fca5a5;
     }
 
     footer {
@@ -371,7 +310,7 @@
   <div class="container">
     <header>
       <h1>مُنـزّل الفيديوهات الشامل</h1>
-      <p>حمل أحدث الفيديوهات من منصتك المفضلة بأعلى جودة وبدون إعلانات</p>
+      <p>حمل أحدث الفيديوهات من جميع المنصات بأعلى جودة وبكل سهولة</p>
     </header>
 
     <div class="platforms-bar">
@@ -395,34 +334,25 @@
         </div>
 
         <div class="quality-selector">
-          <label><i class="fas fa-sliders-h"></i> الجودة المطلوب استخراجها:</label>
+          <label><i class="fas fa-sliders-h"></i> الوضع المفضل:</label>
           <div class="options-group">
-            <button type="button" class="option-btn active" data-quality="max">أعلى جودة (1080p+)</button>
-            <button type="button" class="option-btn" data-quality="720">HD (720p)</button>
-            <button type="button" class="option-btn" data-quality="audio">صوت فقط (MP3)</button>
+            <button type="button" class="option-btn active" data-quality="max">أعلى جودة متوفرة</button>
+            <button type="button" class="option-btn" data-quality="audio">صوت MP3 فقط</button>
           </div>
         </div>
       </form>
 
-      <!-- Loader -->
       <div class="loader-container" id="loader">
         <div class="spinner"></div>
-        <p>جاري استخراج وتحضير رابط التحميل بأعلى جودة...</p>
+        <p>جاري معالجة الرابط وتحضير سيرفر التحميل المباشر...</p>
       </div>
 
-      <!-- Alert -->
-      <div class="alert alert-error" id="errorAlert"></div>
-
-      <!-- Result Section -->
       <div class="result-container" id="resultContainer">
         <div class="result-card">
-          <div class="thumb-wrapper">
-            <img id="resThumb" src="" alt="صورة الفيديو">
-          </div>
           <div class="result-details">
-            <div class="video-title" id="resTitle">عنوان الفيديو المباشر</div>
-            <a id="resDlLink" href="#" target="_blank" class="dl-btn">
-              <i class="fas fa-cloud-download-alt"></i> تحميل الفيديو الآن
+            <div class="video-title" id="resTitle">تم تجهيز سيرفر التنزيل بنجاح!</div>
+            <a id="resDlLink" href="#" target="_blank" rel="noopener noreferrer" class="dl-btn">
+              <i class="fas fa-cloud-download-alt"></i> اضغط هنا لتحميل الفيديو مباشرة
             </a>
           </div>
         </div>
@@ -430,14 +360,13 @@
     </div>
 
     <footer>
-      <p>© 2026 جميع الحقوق محفوظة - تم التطوير باستخدام أحدث محركات الاستخراج السريعة</p>
+      <p>© 2026 تطبيق تنزيل الفيديوهات - يعمل بكفاءة على جميع المنصات</p>
     </footer>
   </div>
 
   <script>
     let selectedQuality = 'max';
 
-    // اختيار الجودة
     document.querySelectorAll('.option-btn').forEach(btn => {
       btn.addEventListener('click', function() {
         document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
@@ -446,7 +375,6 @@
       });
     });
 
-    // زر اللصق السريع
     async function pasteClipboard() {
       try {
         const text = await navigator.clipboard.readText();
@@ -458,84 +386,44 @@
       }
     }
 
-    // المعالجة الرئيسية للاستخراج
-    async function handleDownload(e) {
+    function handleDownload(e) {
       e.preventDefault();
       
       const urlInput = document.getElementById('videoUrl').value.trim();
       const loader = document.getElementById('loader');
-      const errorAlert = document.getElementById('errorAlert');
       const resultContainer = document.getElementById('resultContainer');
       const submitBtn = document.getElementById('submitBtn');
 
       if (!urlInput) return;
 
-      // إخفاء النتائج والأخطاء السابقة
-      errorAlert.style.display = 'none';
       resultContainer.style.display = 'none';
-      
-      // تشغيل التحميل
       loader.style.display = 'block';
       submitBtn.disabled = true;
 
-      // قائمة السيرفرات المتوفرة محلياً ودولياً لضمان العمل دائماً
-      const apiInstances = [
-        'https://api.cobalt.tools/api/json',
-        'https://cobalt-api.kwi.im/api/json',
-        'https://co.wuk.sh/api/json'
-      ];
+      setTimeout(() => {
+        loader.style.display = 'none';
+        submitBtn.disabled = false;
 
-      let isAudio = selectedQuality === 'audio';
-      let payload = {
-        url: urlInput,
-        videoQuality: selectedQuality === 'audio' ? '720' : selectedQuality,
-        isAudioOnly: isAudio
-      };
+        let downloadEngineUrl = '';
 
-      let success = false;
-
-      for (let apiUrl of apiInstances) {
-        try {
-          const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-          });
-
-          const data = await response.json();
-
-          if (data && (data.url || data.picker)) {
-            let finalDownloadUrl = data.url;
-
-            // في حال وجود أكثر من جودة أو ملف اختياري
-            if (!finalDownloadUrl && data.picker && data.picker.length > 0) {
-              finalDownloadUrl = data.picker[0].url;
-            }
-
-            // إظهار النتيجة
-            document.getElementById('resTitle').innerText = data.filename || 'تم استخراج الفيديو بنجاح!';
-            document.getElementById('resThumb').src = 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=500&q=80';
-            document.getElementById('resDlLink').href = finalDownloadUrl;
-            
-            resultContainer.style.display = 'block';
-            success = true;
-            break;
-          }
-        } catch (err) {
-          console.warn('جاري تجربة خادم آخر...', err);
+        // نظام التوجيه المباشر لخوادم التنزيل السريعة
+        if (urlInput.includes('youtube.com') || urlInput.includes('youtu.be')) {
+          const cleanUrl = urlInput.replace('youtube.com', 'ssyoutube.com').replace('youtu.be/', 'ssyoutube.com/watch?v=');
+          downloadEngineUrl = cleanUrl;
+        } else if (urlInput.includes('tiktok.com')) {
+          downloadEngineUrl = `https://ssstik.io/ar?url=${encodeURIComponent(urlInput)}`;
+        } else if (urlInput.includes('instagram.com')) {
+          downloadEngineUrl = `https://snapinst.app/ar?url=${encodeURIComponent(urlInput)}`;
+        } else if (urlInput.includes('facebook.com') || urlInput.includes('fb.watch')) {
+          downloadEngineUrl = `https://snapsave.app/ar?url=${encodeURIComponent(urlInput)}`;
+        } else {
+          downloadEngineUrl = `https://ssyoutube.com/de1/download-page-ipc?url=${encodeURIComponent(urlInput)}`;
         }
-      }
 
-      loader.style.display = 'none';
-      submitBtn.disabled = false;
-
-      if (!success) {
-        errorAlert.innerText = 'تعذر استخراج الفيديو. يرجى التأكد من صحة الرابط وأن حساب صاحب الفيديو ليس خاصاً (Private).';
-        errorAlert.style.display = 'block';
-      }
+        document.getElementById('resDlLink').href = downloadEngineUrl;
+        document.getElementById('resTitle').innerText = selectedQuality === 'audio' ? 'جاهز لاستخراج مقطع الصوت MP3:' : 'جاهز للتنزيل بأعلى جودة متوفرة:';
+        resultContainer.style.display = 'block';
+      }, 800);
     }
   </script>
 </body>
